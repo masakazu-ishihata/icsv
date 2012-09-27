@@ -3,6 +3,11 @@
 /* new */
 icsv *icsv_new(const char *_name)
 {
+  return icsv_new_delimiter(_name, ",");
+}
+/* new with delimiter(s) */
+icsv *icsv_new_delimiter(const char *_name, const char *_del)
+{
   int i, j;
   icsv *csv;
   FILE *fp;
@@ -29,7 +34,7 @@ icsv *icsv_new(const char *_name)
   while( fscanf(fp, "%[^\n]\n", buf) != EOF){
     il = ilist_new(); /* list of items */
 
-    p = strtok(buf, ",");
+    p = strtok(buf, _del);
     while( p != NULL){
       /* skip ^' '* & ' '*$ */
       for(; *p == ' '; p++);
@@ -37,7 +42,7 @@ icsv *icsv_new(const char *_name)
 
       /* push */
       ilist_push(il, istrcln(p));
-      p = strtok(NULL, ",");
+      p = strtok(NULL, _del);
     }
 
     /* add a line to csv's stack */

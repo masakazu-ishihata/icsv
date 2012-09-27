@@ -14,6 +14,10 @@ iHoge の i は ishihata の i です。（重要）
 
 CSV ファイル _name を読み込み icsv インスタンスを返す。   
 
+    icsv *icsv_new_delimiter(const char *_name, const char *_del);
+
+区切り文字が _del であるファイル _name を読み込み icsv インスタンスを返す。
+
     void icsv_free(icsv *_csv);
 
 icsv _csv を free する。

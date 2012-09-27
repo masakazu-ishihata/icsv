@@ -25,6 +25,7 @@ typedef struct ICSV
 
 /* new/free */
 icsv *icsv_new(const char *_name);
+icsv *icsv_new_delimiter(const char *_name, const char *_del);
 void icsv_free(icsv *_csv);
 
 /* show/export */
