@@ -19,7 +19,7 @@ CSV ファイル _name を読み込み icsv インスタンスを返す。
 icsv _csv を free する。
 
 
-## show
+### show
 
     void icsv_show(icsv *_csv, FILE *_fp);
 
@@ -28,7 +28,7 @@ icsv _csv の中身を _fp に出力する。
 
     i, j,  i 行目の j 番目の要素
 
-## getters
+### getters
 
     size_t icsv_num_line(icsv *_csv);
 
