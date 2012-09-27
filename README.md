@@ -4,8 +4,8 @@ csv ファイルを読んでくれる生かしたやつ。（しょぼい）
 [ilist][ilist], [istring][istring] を使ってます。   
 iHoge の i は ishihata の i です。（重要）   
 
-[ilist]: https://github.com/masakauz-ishihata/ilist "ilist"
-[istring]: https://github.com/masakauz-ishihata/istring "istring"
+[ilist]: https://github.com/masakazu-ishihata/ilist "ilist"
+[istring]: https://github.com/masakazu-ishihata/istring "istring"
 
 ## methods
 ### new/free
