@@ -27,5 +27,34 @@ icsv _csv の中身を _fp に出力する。
 
     i, j,  i 行目の j 番目の要素
 
+## gets
+
+    size_t icsv_num_line(icsv *_csv);
+
+CSV _csv の行数を返す。
+
+    size_t icsv_num_item(icsv *_csv, int _i);
+
+CSV _csv の _i 行目のアイテム数を返す。
+
+    char *icsv_get(icsv *_csv, int _i, int _j);
+
+CSV _csv の _i 行目の _j 番目のアイテムを返す。   
+
+
 
 ## 使い方
+
+以下みたいに使う予感がします。
+
+    icsv *csv = icsv_new("hoge.csv");
+
+    for(i=0; i<icsv_num_line(csv); i++){
+      for(j=0; j<icsv_num_item(csv, i); j++){
+        printf("%d, %d, \"%s\"\n", i, j, icsv_get(csv, i, j));
+      }
+    }
+
+    icsv_free(csv);
+
+

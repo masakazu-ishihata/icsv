@@ -119,3 +119,23 @@ void icsv_show(icsv *_csv, FILE *_fp)
     }
   }
 }
+
+/* get */
+size_t icsv_num_line(icsv *_csv)
+{
+  return _csv->nl;
+}
+size_t icsv_num_item(icsv *_csv, int _i)
+{
+  return _csv->ni[_i];
+}
+char *icsv_get(icsv *_csv, int _i, int _j)
+{
+  if(_i < 0 || _i >= _csv->nl){
+    return NULL;
+  }
+  if(_j < 0 || _j >= _csv->ni[_i]){
+    return NULL;
+  }
+  return _csv->item[_i][_j];
+}

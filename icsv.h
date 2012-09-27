@@ -27,7 +27,13 @@ typedef struct ICSV
 icsv *icsv_new(const char *_name);
 void icsv_free(icsv *_csv);
 
-/* show */
+/* show/export */
 void icsv_show(icsv *_csv, FILE *_fp);
+void icsv_export(icsv *_csv, FILE *_fp);
+
+/* get */
+size_t icsv_num_line(icsv *_csv);
+size_t icsv_num_item(icsv *_csv, int _i);
+char *icsv_get(icsv *_csv, int _i, int _j);
 
 #endif /* _INCLUDE_ICSV_H_ */
