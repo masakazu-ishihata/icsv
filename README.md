@@ -1,10 +1,11 @@
 # iCSV
 
 csv ファイルを読んでくれる生かしたやつ。（しょぼい）   
-[ilist][ilist] を使ってます。   
+[ilist][ilist], [istring][istring] を使ってます。   
 iHoge の i は ishihata の i です。（重要）   
 
 [ilist]: https://github.com/masakauz-ishihata/ilist "ilist"
+[istring]: https://github.com/masakauz-ishihata/istring "istring"
 
 ## methods
 ### new/free
@@ -27,19 +28,19 @@ icsv _csv の中身を _fp に出力する。
 
     i, j,  i 行目の j 番目の要素
 
-## gets
+## getters
 
     size_t icsv_num_line(icsv *_csv);
 
-CSV _csv の行数を返す。
+icsv _csv の行数を返す。
 
     size_t icsv_num_item(icsv *_csv, int _i);
 
-CSV _csv の _i 行目のアイテム数を返す。
+icsv _csv の _i 行目のアイテム数を返す。
 
     char *icsv_get(icsv *_csv, int _i, int _j);
 
-CSV _csv の _i 行目の _j 番目のアイテムを返す。   
+icsv _csv の _i 行目の _j 番目のアイテムを返す。   
 
 
 
