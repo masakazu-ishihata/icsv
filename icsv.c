@@ -36,7 +36,7 @@ icsv *icsv_new_delimiter(const char *_name, const char *_del)
 
     p = strtok(buf, _del);
     while( p != NULL){
-      /* skip ^' '* & ' '*$ */
+      /* skip head & tail spaces : ^' '* & ' '*$ */
       for(; *p == ' '; p++);
       for(i=strlen(p)-1; i>=0 && *(p+i) == ' '; *(p+i) = '\0', i--);
 
@@ -67,7 +67,7 @@ icsv *icsv_new_delimiter(const char *_name, const char *_del)
     exit(EXIT_FAILURE);
   }
   for(i=0; i<csv->nl; i++){
-    il = ilist_shift(ll);
+    il = (ilist *)ilist_shift(ll);
 
     /* init csv->item[i][j] */
     csv->ni[i] = ilist_size(il);
@@ -78,7 +78,7 @@ icsv *icsv_new_delimiter(const char *_name, const char *_del)
 
     /* set csv->item[i][j] */
     for(j=0; j<csv->ni[i]; j++){
-      csv->item[i][j] = ilist_shift(il);
+      csv->item[i][j] = (char *)ilist_shift(il);
     }
     ilist_free(il);
   }
