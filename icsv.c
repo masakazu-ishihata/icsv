@@ -1,23 +1,27 @@
 #include "icsv.h"
 
+/*----------------------------------------------------------------------------*/
+/* new / free */
+/*----------------------------------------------------------------------------*/
+/*------------------------------------*/
 /* new */
+/*------------------------------------*/
 icsv *icsv_new(const char *_name)
 {
   return icsv_new_delimiter(_name, ",");
 }
+/*------------------------------------*/
 /* new with delimiter(s) */
+/*------------------------------------*/
 icsv *icsv_new_delimiter(const char *_name, const char *_del)
 {
-  int i, j;
-  icsv *csv;
-  FILE *fp;
-  char buf[ICSV_BUFFER_SIZE], *p;
+  size_t i, j;
 
-  ilist *ll;  /* line list */
-  ilist *il;  /* item list */
-
+  /*------------------------------------*/
   /* init */
-  if( (csv = (icsv *)malloc(sizeof(icsv))) == NULL){
+  /*------------------------------------*/
+  icsv *csv = (icsv *)malloc(sizeof(icsv));
+  if(csv == NULL){
     perror("icsv_new");
     exit(EXIT_FAILURE);
   }
@@ -25,56 +29,43 @@ icsv *icsv_new_delimiter(const char *_name, const char *_del)
   /*------------------------------------*/
   /* load file */
   /*------------------------------------*/
-  if( (fp = fopen(_name, "r")) == NULL){
-    perror("icsv_new");
-    exit(EXIT_FAILURE);
-  }
+  ilist *ls = ilist_import(_name); /* lines */
+  ilist *ll = ilist_new();         /* line list */
+  ilist *il = NULL;                /* item list */
+  char *line, *p;
 
-  ll = ilist_new(); /* list of lines */
-  while( fscanf(fp, "%[^\n]\n", buf) != EOF){
-    il = ilist_new(); /* list of items */
-
-    p = strtok(buf, _del);
-    while( p != NULL){
+  /* list of lines */
+  while((line = ilist_shift(ls)) != NULL){
+    /* list of items */
+    il = ilist_new();
+    p = strtok(line, _del);
+    while(p != NULL){
       /* skip head & tail spaces : ^' '* & ' '*$ */
       for(; *p == ' '; p++);
       for(i=strlen(p)-1; i>=0 && *(p+i) == ' '; *(p+i) = '\0', i--);
 
       /* push */
-      ilist_push(il, istrcln(p));
+      ilist_push(il, strcln(p));
       p = strtok(NULL, _del);
     }
-
     /* add a line to csv's stack */
     ilist_push(ll, il);
+    free(line);
   }
+  ilist_free(ls);
 
-  /* file close */
-  fclose(fp);
 
   /*------------------------------------*/
   /* init item table */
   /*------------------------------------*/
-  /* init csv->ni[i] */
   csv->nl = ilist_size(ll);
-  if( (csv->ni = (size_t *)malloc(csv->nl * sizeof(size_t))) == NULL){
-    perror("icsv_new (ni)");
-    exit(EXIT_FAILURE);
-  }
-  /* init csv->item[i] */
-  if( (csv->item = (char ***)malloc(csv->nl * sizeof(char **))) == NULL){
-    perror("icsv_new (item)");
-    exit(EXIT_FAILURE);
-  }
+  csv->ni = (size_t *)malloc(csv->nl * sizeof(size_t));
+  csv->item = (char ***)malloc(csv->nl * sizeof(char **));
   for(i=0; i<csv->nl; i++){
+    /* init ni[i] & item[i] */
     il = (ilist *)ilist_shift(ll);
-
-    /* init csv->item[i][j] */
     csv->ni[i] = ilist_size(il);
-    if( (csv->item[i] = (char **)malloc(csv->ni[i] * sizeof(char *))) == NULL){
-      perror("icsv_new (item)");
-      exit(EXIT_FAILURE);
-    }
+    csv->item[i] = (char **)malloc(csv->ni[i] * sizeof(char *));
 
     /* set csv->item[i][j] */
     for(j=0; j<csv->ni[i]; j++){
@@ -86,55 +77,65 @@ icsv *icsv_new_delimiter(const char *_name, const char *_del)
 
   return csv;
 }
-
+/*------------------------------------*/
 /* free */
+/*------------------------------------*/
 void icsv_free(icsv *_csv)
 {
-  int i, j;
-
-  if(_csv != NULL){
-    /* free lines */
-    for(i=0; i<_csv->nl; i++){
-      /* free items */
-      for(j=0; j<_csv->ni[i]; j++){
-        free(_csv->item[i][j]);
-        _csv->item[i][j] = NULL;
-      }
-      free(_csv->item[i]);
-      _csv->item[i] = NULL;
-    }
-    free(_csv->ni);
-    _csv->ni = NULL;
-    free(_csv->item);
-    _csv->item = NULL;
-    free(_csv);
-  }
-}
-
-/* show */
-void icsv_show(icsv *_csv, FILE *_fp)
-{
-  int i,j;
-
-  fprintf(_fp, "%zd lines\n", _csv->nl);
+  size_t i, j;
 
   for(i=0; i<_csv->nl; i++){
     for(j=0; j<_csv->ni[i]; j++){
-      fprintf(_fp, "%d, %d, \"%s\"\n", i, j, _csv->item[i][j]);
+      free(_csv->item[i][j]);
+      _csv->item[i][j] = NULL;
+    }
+    free(_csv->item[i]);
+    _csv->item[i] = NULL;
+  }
+  free(_csv->ni);
+  free(_csv->item);
+  _csv->ni = NULL;
+  _csv->item = NULL;
+
+  /* main */
+  free(_csv);
+}
+/*------------------------------------*/
+/* show */
+/*------------------------------------*/
+void icsv_show(icsv *_csv, FILE *_fp)
+{
+  size_t i, j;
+
+  fprintf(_fp, "%zd lines\n", _csv->nl);
+  for(i=0; i<_csv->nl; i++){
+    for(j=0; j<_csv->ni[i]; j++){
+      fprintf(_fp, "%zd, %zd, \"%s\"\n", i, j, _csv->item[i][j]);
     }
   }
 }
 
-/* get */
+/*----------------------------------------------------------------------------*/
+/* getters */
+/*----------------------------------------------------------------------------*/
+/*------------------------------------*/
+/* # lines */
+/*------------------------------------*/
 size_t icsv_num_line(icsv *_csv)
 {
   return _csv->nl;
 }
-size_t icsv_num_item(icsv *_csv, int _i)
+/*------------------------------------*/
+/* # items in _i-th line */
+/*------------------------------------*/
+size_t icsv_num_item(icsv *_csv, size_t _i)
 {
   return _csv->ni[_i];
 }
-char *icsv_get(icsv *_csv, int _i, int _j)
+/*------------------------------------*/
+/* _j-th item in _i-th line */
+/*------------------------------------*/
+char *icsv_get(icsv *_csv, size_t _i, size_t _j)
 {
   if(_i < 0 || _i >= _csv->nl){
     return NULL;

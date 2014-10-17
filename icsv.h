@@ -10,9 +10,8 @@
 /* include */
 /*----------------------------------------------------------------------------*/
 #include <stdio.h>
-#include <string.h>
-#include "ilist.h"
-#include "iutil.h"
+#include <istring.h>
+#include <ilist.h>
 
 /*----------------------------------------------------------------------------*/
 /* icsv */
@@ -35,7 +34,7 @@ void icsv_export(icsv *_csv, FILE *_fp);
 
 /* get */
 size_t icsv_num_line(icsv *_csv);
-size_t icsv_num_item(icsv *_csv, int _i);
-char  *icsv_get(icsv *_csv, int _i, int _j);
+size_t icsv_num_item(icsv *_csv, size_t _i);
+char  *icsv_get(icsv *_csv, size_t _i, size_t _j);
 
 #endif /* _INCLUDE_ICSV_H_ */

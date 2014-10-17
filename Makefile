@@ -1,12 +1,12 @@
 # Makefile
 TAR = test
 CC = gcc -O6 -Wall
-L = -lm -lilist -liutil
+L = -lm -lilist -listring
 OBJS = main.o icsv.o
 SHAD = -fPIC -shared
 LIB = libicsv.so
 
-all : $(TAR)
+all : $(TAR) lib
 $(TAR): $(OBJS)
 	  $(CC) -o $@ $(OBJS) $(L)
 clean:
